@@ -39,9 +39,20 @@ Make sure you have GNU Stow installed:
 
 *** macos
 #+begin_src bash
-brew install zsh eza fzf antidote yazi carapace zoxide
+brew install zsh eza fzf antidote yazi carapace zoxide direnv
 #+end_src
 *** arch
 #+begin_src bash
-yay -S zsh eza fzf antidote yazi carapace-bin zoxide
+yay -S zsh eza fzf antidote yazi carapace-bin zoxide direnv
+#+end_src
+*** ubuntu
+#+begin_src bash
+sudo apt install zsh eza fzf  zoxide direnv
+#+end_src
+
+antidote 自动使用 git 安装。
+
+**** carapace-bin
+#+begin_src bash
+  echo "deb [trusted=yes] https://apt.fury.io/rsteube/ /" | sudo tee /etc/apt/sources.list.d/fury.list && sudo apt-get update && sudo apt-get install -y carapace-bin
 #+end_src
