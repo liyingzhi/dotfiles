@@ -2,8 +2,7 @@
 .PHONY: stow clean
 
 stow:
-	stow --dotfiles .
+	stow -t "$HOME" --dotfiles .
 
 clean:
-	stow -D .
-
+	stow -t "$HOME" -D .
