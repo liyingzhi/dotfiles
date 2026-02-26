@@ -39,9 +39,9 @@ Make sure you have GNU Stow installed:
 
 *** macos
 #+begin_src bash
-brew install zsh eza fzf antidote yazi carapace
+brew install zsh eza fzf antidote yazi carapace zoxide
 #+end_src
 *** arch
 #+begin_src bash
-yay -S zsh eza fzf antidote yazi carapace-bin
+yay -S zsh eza fzf antidote yazi carapace-bin zoxide
 #+end_src
