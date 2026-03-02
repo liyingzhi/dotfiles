@@ -63,6 +63,8 @@ alias g='git'
 alias f='cd $(fd --type directory | fzf)'
 alias cd..='cd ..'
 
+alias cpwd="pwd | tr -d '\n' | pbcopy && echo 'pwd copied to clipboard'"
+
 alias ya="yazi"
 function ff() {
  local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
