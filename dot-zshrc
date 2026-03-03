@@ -363,21 +363,44 @@ alias archupdate="$HOME/github/scripts/archupdate"
 alias lzd='lazydocker'
 
 function cpwd {
-    if (( $+commands[pbcopy] )); then
-        print -n $PWD | pbcopy
-    elif (( $+commands[wl-copy] )); then
-        print -n $PWD | wl-copy
-    elif (( $+commands[xclip] )); then
-        print -n $PWD | xclip -selection clipboard
-    elif (( $+commands[xsel] )); then
-        print -n $PWD | xsel -b
+    local target_path
+
+    if [[ $# -eq 0 ]]; then
+        target_path="$PWD"
+    else
+        if [[ -f "$1" ]]; then
+            target_path="$(realpath "$1")"
+        elif [[ -d "$1" ]]; then
+            target_path="$(realpath "$1")"
+        else
+            if [[ "$1" == /* ]]; then
+                target_path="$1"
+            else
+                target_path="$PWD/$1"
+            fi
+        fi
+    fi
+
+    if [[ "${OSTYPE}" == darwin* ]] && (( ${+commands[pbcopy]} )); then
+        print -n "$target_path" | pbcopy
+    elif [ -n "${WAYLAND_DISPLAY:-}" ] && (( ${+commands[wl-copy]} )); then
+        print -n "$target_path" | wl-copy
+    elif [ -n "${DISPLAY:-}" ] && (( ${+commands[xsel]} )); then
+        print -n "$target_path" | xsel -b
+    elif [ -n "${DISPLAY:-}" ] && (( ${+commands[xclip]} )); then
+        print -n "$target_path" | xclip -selection clipboard
     else
         echo "Error: No clipboard tool found. Please install:"
         echo "  - macOS: pbcopy (built-in)"
         echo "  - Linux: xclip or xsel (e.g., sudo apt install xclip)"
         return 1
     fi
-    echo 'pwd copied to clipboard'
+
+    if [[ $# -eq 0 ]]; then
+        echo 'Current directory path copied to clipboard'
+    else
+        echo "Path copied to clipboard: $target_path"
+    fi
 }
 
 # rustup index repos mirror
