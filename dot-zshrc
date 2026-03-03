@@ -83,6 +83,7 @@ fi
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git
+    copypath
     zsh-autosuggestions
     zsh-syntax-highlighting
     direnv
@@ -360,6 +361,24 @@ alias archupdate="$HOME/github/scripts/archupdate"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias lzd='lazydocker'
+
+function cpwd {
+    if (( $+commands[pbcopy] )); then
+        print -n $PWD | pbcopy
+    elif (( $+commands[wl-copy] )); then
+        print -n $PWD | wl-copy
+    elif (( $+commands[xclip] )); then
+        print -n $PWD | xclip -selection clipboard
+    elif (( $+commands[xsel] )); then
+        print -n $PWD | xsel -b
+    else
+        echo "Error: No clipboard tool found. Please install:"
+        echo "  - macOS: pbcopy (built-in)"
+        echo "  - Linux: xclip or xsel (e.g., sudo apt install xclip)"
+        return 1
+    fi
+    echo 'pwd copied to clipboard'
+}
 
 # rustup index repos mirror
 export RUSTUP_DIST_SERVER="https://rsproxy.cn"
