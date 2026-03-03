@@ -5,4 +5,4 @@ stow:
 	stow -t "${HOME}" --dotfiles .
 
 clean:
-	stow -t "${HOME}" -D .
+	stow -t "${HOME}" --dotfiles -D .
