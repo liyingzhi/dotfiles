@@ -361,6 +361,7 @@ alias archupdate="$HOME/github/scripts/archupdate"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias lzd='lazydocker'
+alias vi='vim'
 
 function cpwd {
     local target_path
