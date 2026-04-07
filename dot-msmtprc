@@ -1,0 +1,15 @@
+# Set default values for all the accounts.
+defaults
+logfile ~/.maildir/msmtp.log
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+account gmail
+auth on
+host smtp.gmail.com
+port 465
+protocol smtp
+from liyingli2018@gmail.com
+user liyingli2018@gmail.com
+passwordeval "pass mu4e/gmail"
+tls on
+tls_starttls off

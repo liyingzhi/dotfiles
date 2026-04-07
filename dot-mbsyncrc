@@ -1,0 +1,27 @@
+IMAPAccount gmail
+Host imap.gmail.com
+User liyingli2018@gmail.com
+PassCmd "pass mu4e/gmail"
+Port 993
+TLSType IMAPS
+# TLSVersions TLSv1.2
+AuthMechs PLAIN
+SystemCertificates no
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+SubFolders Verbatim
+Path ~/.maildir/gmail/
+Inbox ~/.maildir/gmail/INBOX
+
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
+Patterns *
+Create Near
+Sync All
+Expunge Both
+SyncState *
