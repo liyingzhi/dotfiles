@@ -14,4 +14,17 @@ passwordeval "pass mu4e/gmail"
 tls on
 tls_starttls off
 
+# =====================================================================
+
+account qq
+auth on
+host smtp.qq.com
+port 465
+protocol smtp
+from sd_liyingli@foxmail.com
+user sd_liyingli@foxmail.com
+passwordeval "pass mu4e/qq-exmail"
+tls on
+tls_starttls off
+
 account default : gmail

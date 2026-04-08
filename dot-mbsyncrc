@@ -25,3 +25,33 @@ Create Near
 Sync All
 Expunge Both
 SyncState *
+
+# =====================================================================
+
+IMAPAccount qq
+Host imap.qq.com
+User sd_liyingli@foxmail.com
+PassCmd "pass mu4e/qq-exmail"
+Port 993
+TLSType IMAPS
+# TLSVersions TLSv1.2
+AuthMechs LOGIN
+SystemCertificates no
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore qq-remote
+Account qq
+
+MaildirStore qq-local
+SubFolders Verbatim
+Path ~/.maildir/qq/
+Inbox ~/.maildir/qq/INBOX
+
+Channel qq
+Far :qq-remote:
+Near :qq-local:
+Patterns *
+Create Near
+Sync All
+Expunge Both
+SyncState *
