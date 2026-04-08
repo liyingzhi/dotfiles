@@ -13,3 +13,5 @@ user liyingli2018@gmail.com
 passwordeval "pass mu4e/gmail"
 tls on
 tls_starttls off
+
+account default : gmail
