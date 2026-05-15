@@ -1,0 +1,31 @@
+# -*- mode: shell-script; -*-
+
+# https://wiki.archlinux.org/title/Xinit#xinitrc
+# 2 Configuration/ 2.1 xinitrc/ Note
+# At the very least, ensure that the last if block in /etc/X11/xinit/xinitrc is present in your ~/.xinitrc file to ensure that the scripts in /etc/X11/xinit/xinitrc.d are sourced.
+xinitdir="/etc/X11/xinit"
+
+# start some nice programs
+if [ -d "$xinitdir"/xinitrc.d ] ; then
+	for f in "$xinitdir/xinitrc.d"/?*.sh ; do
+		[ -x "$f" ] && . "$f"
+	done
+	unset f
+fi
+
+################## Customize###########################
+
+# export XCURSOR_THEME="capitaine-cursors"   # 或 DMZ-White、redglass 等
+# export XCURSOR_SIZE=24              # 根据屏幕 DPI 调整，一般 16/24/32 都可
+# export XCURSOR_WIDTH=24             # 同 XCURSOR_SIZE 保持一致就行
+# --- 强制刷新 root 光标，触发 X Server 读取新主题 ---
+
+# xrdb -merge ~/.Xresources
+# xsetroot -cursor_name left_ptr
+
+[ -f /etc/xprofile ] && . /etc/xprofile
+[ -f ~/.xprofile ] && . ~/.xprofile
+
+exec bspwm
+# exec startxfce4
+# exec xfce4-session
