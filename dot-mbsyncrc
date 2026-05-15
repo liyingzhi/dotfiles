@@ -1,3 +1,5 @@
+# -*- mode: shell-script; -*-
+
 IMAPAccount gmail
 Host imap.gmail.com
 User liyingli2018@gmail.com

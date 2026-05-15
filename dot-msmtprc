@@ -1,3 +1,5 @@
+# -*- mode: shell-script; -*-
+
 # Set default values for all the accounts.
 defaults
 logfile ~/.maildir/msmtp.log
