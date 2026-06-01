@@ -409,11 +409,12 @@ export RUSTUP_DIST_SERVER="https://rsproxy.cn"
 export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 
 # pnpm
-export PNPM_HOME="/home/ii/.local/share/pnpm"
+export PNPM_HOME="/home/ii/.local/share/pnpm/bin/"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
+
 source ~/completion-for-pnpm.zsh
 # pnpm end
 
