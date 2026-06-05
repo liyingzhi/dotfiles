@@ -1,6 +1,11 @@
 # -*- mode: shell-script; -*-
 
-# https://wiki.archlinux.org/title/Xinit#xinitrc
+# Ref: https://wiki.archlinux.org/title/Xinit
+# xinit
+# The xinit program allows a user to manually start an Xorg display server. The startx(1) script is a front-end for xinit(1).
+# xinit is typically used to start window managers or desktop environments. While you can also use xinit to run GUI applications without a window manager, many graphical applications expect an EWMH compliant window manager. Display managers start Xorg for you and generally source xprofile.
+
+# Ref: https://wiki.archlinux.org/title/Xinit#xinitrc
 # 2 Configuration/ 2.1 xinitrc/ Note
 # At the very least, ensure that the last if block in /etc/X11/xinit/xinitrc is present in your ~/.xinitrc file to ensure that the scripts in /etc/X11/xinit/xinitrc.d are sourced.
 xinitdir="/etc/X11/xinit"
@@ -26,6 +31,11 @@ fi
 [ -f /etc/xprofile ] && . /etc/xprofile
 [ -f ~/.xprofile ] && . ~/.xprofile
 
+# Ref: https://wiki.archlinux.org/title/Bspwm
 exec bspwm
+
+# Ref: https://wiki.archlinux.org/title/Xfce
+# 2 Starting / Note section
+# Do not call the xfce4-session executable directly; startxfce4 is the correct command which, in turn, calls the former when appropriate.
 # exec startxfce4
 # exec xfce4-session
