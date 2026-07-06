@@ -438,3 +438,10 @@ source ~/completion-for-pnpm.zsh
 #   unfunction preexec
 #   PS1='$ '
 # fi
+
+# Moshi / mobile SSH truecolor fallback
+# if [[ -n "$SSH_TTY" && -z "$COLORTERM" ]]; then
+#   export TERM=xterm-direct
+#   export COLORTERM=truecolor
+# fi
+alias igcemacs_rmote='TERM=xterm-direct COLORTERM=truecolor igcemacs -nw'
