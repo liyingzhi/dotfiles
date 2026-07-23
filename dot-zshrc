@@ -439,9 +439,18 @@ source ~/completion-for-pnpm.zsh
 #   PS1='$ '
 # fi
 
+# Only set these if your terminal supports truecolor (iTerm2, Kitty, Alacritty, etc.).
+# Legacy terminals (xterm, old SSH) cannot parse 24-bit color and will show garbled output.
+
+# TERM: low-level capability database (traditional).
+# COLORTERM: app-facing flag (modern, direct).
+
 # Moshi / mobile SSH truecolor fallback
 # if [[ -n "$SSH_TTY" && -z "$COLORTERM" ]]; then
 #   export TERM=xterm-direct
 #   export COLORTERM=truecolor
 # fi
-alias igcemacs_rmote='TERM=xterm-direct COLORTERM=truecolor igcemacs -nw'
+
+if [[ -n "$SSH_TTY" && -z "$COLORTERM" ]]; then
+  export COLORTERM=truecolor
+fi
