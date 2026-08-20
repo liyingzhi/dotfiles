@@ -420,6 +420,8 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 
+# Generate and configure command-line tab-completion scripts
+# pnpm completion zsh > ~/completion-for-pnpm.zsh
 source ~/completion-for-pnpm.zsh
 # pnpm end
 
