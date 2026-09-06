@@ -56,7 +56,11 @@ antidote 自动使用 git 安装。
 #+begin_src bash
   echo "deb [trusted=yes] https://apt.fury.io/rsteube/ /" | sudo tee /etc/apt/sources.list.d/fury.list && sudo apt-get update && sudo apt-get install -y carapace-bin
 #+end_src
-
+*** chang default shell
+#+begin_src bash
+  chsh -s $(which zsh)
+  chsh -s $(which bash)
+#+end_src
 ** antidote
 [[https://getantidote.github.io/][antidote]] 是 zsh 插件管理器。安装系统包（见上方 Prerequisites）或首次开 shell 时会 clone 到 =~/.antidote= 。
 *** antidote 会按 =~/.zsh_plugins.txt= （本仓库 =dot-zsh_plugins.txt= ）用 git 自动克隆插件。
