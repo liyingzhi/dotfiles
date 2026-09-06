@@ -30,7 +30,7 @@ ohmyzsh/ohmyzsh path:plugins/extract
 ohmyzsh/ohmyzsh path:plugins/direnv
 radian-software/wdx
 
-# Other Fish-like features
-zdharma-continuum/fast-syntax-highlighting
+# Other Fish-like features (order matters: autosuggestions before highlighting)
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-history-substring-search
+zdharma-continuum/fast-syntax-highlighting
