@@ -61,6 +61,6 @@ antidote 自动使用 git 安装。
 [[https://getantidote.github.io/][antidote]] 是 zsh 插件管理器。安装系统包（见上方 Prerequisites）或首次开 shell 时会 clone 到 =~/.antidote= 。
 *** antidote 会按 =~/.zsh_plugins.txt= （本仓库 =dot-zsh_plugins.txt= ）用 git 自动克隆插件。
 *** 用法
-- 插件清单：=~/.zsh_plugins.txt=
-- 更新插件：=antidote update=
-- 查看已装：=antidote list=
+- 插件清单： =~/.zsh_plugins.txt=
+- 更新插件： =antidote update=
+- 查看已装： =antidote list=
