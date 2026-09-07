@@ -1,18 +1,23 @@
 # -*- mode: shell-script; -*-
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# =============================================================================
+# Instant prompt (Powerlevel10k)
+# Must stay near the top. Anything that may need console input goes above this.
+# =============================================================================
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Lazy-load (autoload) Zsh function files from a directory.
+# =============================================================================
+# Autoload — custom zsh functions
+# =============================================================================
 ZFUNCDIR=$HOME/.zfunctions
 fpath=($ZFUNCDIR $fpath)
 autoload -Uz $ZFUNCDIR/*(.:t)
 
-# antidote plugin manager
+# =============================================================================
+# Plugins — antidote
+# =============================================================================
 if is-macos; then
     # for macos
     source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
@@ -26,29 +31,72 @@ else
     source $HOME/.antidote/antidote.zsh
 fi
 
+# Skip daily security scans when zcompdump is fresh (ez-compinit).
+# NOTE: Caching zcompdump improves startup speed but can mask $fpath changes.
+# If completions stop working after updating your fpath, delete the cache file
+# (~/.zcompcache/*) or disable caching and restart your shell.
+# Enable with caution:
+# zstyle ':completion::complete:*' use-cache yes
+zstyle ':plugin:ez-compinit' 'use-cache' 'yes'
+
 antidote load
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# =============================================================================
+# Completion
+# Run compsys now (not on first precmd) so carapace/fzf compdefs aren't queued.
+# =============================================================================
+(( $+functions[run-compinit] )) && run-compinit
+
+# =============================================================================
+# Prompt — Powerlevel10k
+# Customize with `p10k configure` or edit ~/.p10k.zsh.
+# =============================================================================
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# completion
-# FZF: fuzzy finder
-# Set up fzf key bindings and fuzzy completion
-# source <(fzf --zsh)
-if [ -f ~/.fzf.zsh ]; then
-    . ~/.fzf.zsh
+# =============================================================================
+# Tool init cache helper
+# Avoids process substitution (carapace / zoxide / …) on every startup.
+# =============================================================================
+_zsh_cache_init() {
+  local bin=$1 out=$2
+  shift 2
+  [[ -r $out && ! $bin -nt $out ]] || {
+    mkdir -p -- ${out:h} || return
+    "$@" >|$out || return
+    zcompile -U -- $out 2>/dev/null &!
+  }
+  source -- $out
+}
+
+# =============================================================================
+# Fuzzy finder — fzf
+# =============================================================================
+if [[ -f ~/.fzf.zsh ]]; then
+  . ~/.fzf.zsh
 fi
 
-# autoload -U compinit && compinit
+# =============================================================================
+# Completion — carapace
+# =============================================================================
 if (( $+commands[carapace] )); then
   export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
-  zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-  source <(carapace _carapace)
+  zstyle ':completion:*' format $'\e[2;37m-- Completing %d --\e[m'
+  _zsh_cache_init $commands[carapace] ${XDG_CACHE_HOME:-$HOME/.cache}/zsh/carapace-init.zsh \
+    carapace _carapace
 fi
 
-# Set up zoxide
-eval "$(zoxide init zsh)"
+# =============================================================================
+# Navigation — zoxide
+# =============================================================================
+if (( $+commands[zoxide] )); then
+  _zsh_cache_init $commands[zoxide] ${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zoxide-init.zsh \
+    zoxide init zsh
+fi
+unfunction _zsh_cache_init
 
+# =============================================================================
+# Keybindings
+# =============================================================================
 # Ctrl+Space accepts autosuggestion
 bindkey '^ ' autosuggest-accept
 
@@ -64,7 +112,9 @@ if [[ -n ${terminfo[kcud1]} ]]; then
     bindkey "${terminfo[kcud1]}" history-substring-search-down
 fi
 
-# aliases
+# =============================================================================
+# Aliases
+# =============================================================================
 alias eza="eza --icons=auto --hyperlink --color=always --color-scale=all --color-scale-mode=gradient --git --git-repos"
 alias l="eza"
 alias ls="eza"
@@ -79,6 +129,9 @@ alias archupdate="$HOME/github/scripts/archupdate"
 
 alias vi='vim'
 
+# =============================================================================
+# Functions
+# =============================================================================
 function cpwd {
     local target_path
 
@@ -120,11 +173,15 @@ function cpwd {
     fi
 }
 
-# rustup index repos mirror
+# =============================================================================
+# Environment — rustup mirror
+# =============================================================================
 export RUSTUP_DIST_SERVER="https://rsproxy.cn"
 export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
 
-# pnpm
+# =============================================================================
+# Environment — pnpm
+# =============================================================================
 export PNPM_HOME="${HOME}/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
@@ -138,8 +195,10 @@ esac
 
 # Generate with: pnpm completion zsh > ~/completion-for-pnpm.zsh
 [[ -f ~/completion-for-pnpm.zsh ]] && source ~/completion-for-pnpm.zsh
-# pnpm end
 
+# =============================================================================
+# Terminal — Emacs TRAMP / SSH truecolor
+# =============================================================================
 # remote emacs tramp
 # https://www.emacswiki.org/emacs/TrampMode#toc7
 # https://emacs-china.org/t/spacemacs-tramp/2199

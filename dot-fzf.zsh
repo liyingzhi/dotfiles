@@ -1,5 +1,14 @@
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+# Set up fzf key bindings and fuzzy completion (cached; avoid `fzf --zsh` every startup).
+() {
+  (( $+commands[fzf] )) || return
+  local out=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/fzf-init.zsh
+  if [[ ! -r $out || $commands[fzf] -nt $out ]]; then
+    mkdir -p -- ${out:h} || return
+    fzf --zsh >|$out || return
+    zcompile -U -- $out 2>/dev/null &!
+  fi
+  source -- $out
+}
 
 # Using highlight (http://www.andre-simon.de/doku/highlight/en/highlight.html)
 # https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings
