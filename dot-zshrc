@@ -71,14 +71,52 @@ source ${zsh_plugins}.zsh
 # Tool init cache helper
 # Avoids process substitution (carapace / zoxide / …) on every startup.
 # =============================================================================
+# =============================================================================
+# Cache initialization helper
+# Purpose: avoid re-running initialization-script-generating commands
+#          (e.g. `carapace _carapace`, `zoxide init zsh`) on every zsh startup,
+#          improving shell startup speed.
+#
+# Usage:
+#   _zsh_cache_init <binary_path> <cache_output_file> <generator_command...>
+#
+# Arguments:
+#   $1  Path to the command binary, used to decide whether the cache is stale
+#   $2  Path to the cache output file
+#   $@  Remaining arguments form the actual generator command to run
+# =============================================================================
 _zsh_cache_init() {
+  # $1: path to the command binary (e.g. $commands[carapace])
+  # $2: path to the cache output file (e.g. ~/.cache/zsh/carapace-init.zsh)
   local bin=$1 out=$2
+
+  # Remove the first two arguments; the rest is the actual command to run,
+  # e.g. `carapace _carapace`
   shift 2
+
+  # Check whether the cache is valid:
+  #   -r $out          cache file exists and is readable
+  #   ! $bin -nt $out  $bin is not newer than $out (cache has not expired)
+  #
+  # If the condition is false (cache is invalid), run the regeneration block.
   [[ -r $out && ! $bin -nt $out ]] || {
+    # Create the cache file's directory; return on failure
     mkdir -p -- ${out:h} || return
+
+    # Run the remaining command and force-overwrite its stdout into the cache file.
+    # Return on failure.
     "$@" >|$out || return
+
+    # Compile the cache file into zsh bytecode (.zwc) in the background
+    # to speed up the next `source`.
+    # -U         skip security checks
+    # 2>/dev/null discard error output
+    # &!         run in background and disown, so it does not block the shell
     zcompile -U -- $out 2>/dev/null &!
   }
+
+  # Source the cache file (whether it was already valid or just regenerated).
+  # -- means treat the following argument as a filename even if it starts with -
   source -- $out
 }
 
