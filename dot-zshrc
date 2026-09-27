@@ -27,7 +27,11 @@ autoload -Uz $ZFUNCDIR/*(.:t)
 # =============================================================================
 if is-macos; then
     # for macos
-    source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+    # source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+
+    # Lazy-load antidote from its functions directory.
+    fpath=($(brew --prefix)/opt/antidote/share/antidote/functions $fpath)
+    autoload -Uz antidote
 else
     # Clone antidote if necessary.
     if [[ ! -d $HOME/.antidote ]]; then
@@ -35,7 +39,11 @@ else
     fi
 
     # Create an amazing Zsh config using antidote plugins.
-    source $HOME/.antidote/antidote.zsh
+    # source $HOME/.antidote/antidote.zsh
+
+    # Lazy-load antidote from its functions directory.
+    fpath=($HOME/.antidote/functions $fpath)
+    autoload -Uz antidote
 fi
 
 # Skip daily security scans when zcompdump is fresh (ez-compinit).
