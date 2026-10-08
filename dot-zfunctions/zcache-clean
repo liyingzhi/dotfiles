@@ -1,0 +1,83 @@
+#!/bin/zsh
+# =============================================================================
+# zcache-clean
+# Remove all zsh startup cache files, for manual cache cleanup.
+# After removal, all of these are auto-regenerated on next zsh startup
+# (i.e., auto-updated after a tool download/upgrade):
+#   - Tool init caches  ${XDG_CACHE_HOME}/zsh/{carapace,fzf,zoxide}-init.zsh (+.zwc)
+#       _zsh_cache_init regenerates them after a binary is downloaded/upgraded
+#       (binary mtime newer than cache mtime); also regenerates immediately
+#       on the next startup after manual removal
+#   - Completion cache  ${XDG_CACHE_HOME}/zsh/zcompdump
+#       (or ~/.zcompcache when COMPDIR is not set);
+#       zcompinit / ez-compinit rebuild it on the next startup
+#   - antidote static plugin file  ${ZDOTDIR}/.zsh_plugins.zsh
+#       regenerated on next startup if .zsh_plugins.txt is newer
+#   - Powerlevel10k instant prompt
+#       auto-regenerated when missing or when the p10k version changes
+#
+# Usage:  zcache-clean [--dry-run | -n]
+#         --dry-run / -n: dry run, list files that would be removed
+#         without actually removing them
+#         After a real run, restart zsh (or run `exec zsh`); caches then
+#         auto-regenerate
+# =============================================================================
+zcache-clean() {
+  local cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}
+  local zdot=${ZDOTDIR:-$HOME}
+  local p10k_pat=p10k-instant-prompt-*
+  local dry=0
+  local C_BOLD='' C_RESET='' C_CYAN='' C_GREEN='' C_RED=''  # ANSI colors, empty when not a tty
+
+  if [[ -t 1 ]]; then
+    C_BOLD=$'\e[1m'; C_RESET=$'\e[0m'
+    C_CYAN=$'\e[36m'; C_GREEN=$'\e[32m'; C_RED=$'\e[31m'
+  fi
+
+  if (( $# > 0 )); then
+    case $1 in
+      --dry-run|-n) dry=1; shift ;;
+      *) print -r -- "${C_BOLD}${C_RED}zcache-clean: unknown option: $1${C_RESET} (usage: zcache-clean [--dry-run])" >&2; return 1 ;;
+    esac
+  fi
+
+  # Subshell + null_glob: when a glob matches nothing, the argument simply
+  # disappears, avoiding "no matches found" errors (safe to run repeatedly)
+  (
+    setopt null_glob
+    if (( $dry )); then
+      # Dry run: list the files that would be removed, without removing them
+      print -r -- "${C_BOLD}${C_CYAN}zcache-clean (dry-run) files that would be removed:${C_RESET}"
+      if [[ -e "${cache_dir}/zsh" ]]; then
+        print -r -- "${C_BOLD}${C_CYAN}  [rm -rf -- ${cache_dir}/zsh]${C_RESET}"
+        for f in "${cache_dir}/zsh" "${cache_dir}/zsh"/*; do
+          [[ -e $f ]] && print -r -- "    - $f"
+        done
+      fi
+      if [[ -e "${HOME}/.zcompcache" ]]; then
+        print -r -- "${C_BOLD}${C_CYAN}  [rm -rf -- ${HOME}/.zcompcache]${C_RESET}"
+        for f in "${HOME}/.zcompcache" "${HOME}/.zcompcache"/*; do
+          [[ -e $f ]] && print -r -- "    - $f"
+        done
+      fi
+      print -r -- "${C_BOLD}${C_CYAN}  [rm -f -- ${cache_dir}/${p10k_pat}]${C_RESET}"
+      for f in "${cache_dir}/p10k-instant-prompt-"*; do
+        [[ -e $f ]] && print -r -- "    - $f"
+      done
+      print -r -- "${C_BOLD}${C_CYAN}  [rm -f -- ${zdot}/.zsh_plugins.zsh ${zdot}/.zsh_plugins.zsh.zwc]${C_RESET}"
+      for f in "${zdot}/.zsh_plugins.zsh" "${zdot}/.zsh_plugins.zsh.zwc"; do
+        [[ -e $f ]] && print -r -- "    - $f"
+      done
+    else
+      rm -rf -- "${cache_dir}/zsh" "$HOME/.zcompcache"
+      rm -f -- "${cache_dir}/p10k-instant-prompt-"*
+      rm -f -- "${zdot}/.zsh_plugins.zsh" "${zdot}/.zsh_plugins.zsh.zwc"
+    fi
+  )
+
+  if (( $dry )); then
+    print -r -- "${C_BOLD}${C_CYAN}zcache-clean: dry run completed; no files removed${C_RESET}"
+  else
+    print -r -- "${C_BOLD}${C_GREEN}zcache-clean: zsh startup caches removed; all auto-regenerate on next startup${C_RESET}"
+  fi
+}
