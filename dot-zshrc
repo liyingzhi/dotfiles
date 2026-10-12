@@ -1,6 +1,16 @@
 # -*- mode: shell-script; -*-
 
 # =============================================================================
+# Terminal — Emacs TRAMP
+# =============================================================================
+# Emacs TRAMP (and other dumb terminals) set TERM=dumb, where the zle line
+# editor and the prompt misbehave. Disable the editor, fall back to a bare
+# prompt, and exit zshrc early so p10k and plugins never load.
+# Reference: https://www.emacswiki.org/emacs/TrampMode
+#              https://emacs-china.org/t/spacemacs-tramp/2199
+[[ "$TERM" == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
+# =============================================================================
 # Instant prompt (Powerlevel10k)
 # Must stay near the top. Anything that may need console input goes above this.
 # =============================================================================
@@ -264,20 +274,8 @@ esac
 [[ -f ~/completion-for-pnpm.zsh ]] && source ~/completion-for-pnpm.zsh
 
 # =============================================================================
-# Terminal — Emacs TRAMP / SSH truecolor
+# Terminal — SSH truecolor
 # =============================================================================
-# remote emacs tramp
-# https://www.emacswiki.org/emacs/TrampMode#toc7
-# https://emacs-china.org/t/spacemacs-tramp/2199
-# if [[ "$TERM" == "dumb" ]]
-# then
-#   unsetopt zle
-#   unsetopt prompt_cr
-#   unsetopt prompt_subst
-#   unfunction precmd
-#   unfunction preexec
-#   PS1='$ '
-# fi
 
 # Only set these if your terminal supports truecolor (iTerm2, Kitty, Alacritty, etc.).
 # Legacy terminals (xterm, old SSH) cannot parse 24-bit color and will show garbled output.
