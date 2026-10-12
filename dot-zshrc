@@ -3,12 +3,20 @@
 # =============================================================================
 # Terminal — Emacs TRAMP
 # =============================================================================
-# Emacs TRAMP (and other dumb terminals) set TERM=dumb, where the zle line
-# editor and the prompt misbehave. Disable the editor, fall back to a bare
-# prompt, and exit zshrc early so p10k and plugins never load.
+# Emacs TRAMP (and other dumb terminals) set TERM=dumb, where zsh's line
+# editor and prompt break. Clear the right-hand prompt, fall back to a bare
+# PS1, disable zle, unset RCS (further startup files and history saving are
+# then suppressed), and exit zshrc before p10k/plugins load.
 # Reference: https://www.emacswiki.org/emacs/TrampMode
 #              https://emacs-china.org/t/spacemacs-tramp/2199
-[[ "$TERM" == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+if [ $TERM = "dumb" ]; then
+        unset RPROMPT
+        unset RPS1
+        PS1="$ "
+        unsetopt zle
+        unsetopt rcs  # Inhibit loading of further config files
+        return
+fi
 
 # =============================================================================
 # Instant prompt (Powerlevel10k)
